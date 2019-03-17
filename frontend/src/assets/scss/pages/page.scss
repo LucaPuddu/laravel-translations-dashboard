@@ -1,0 +1,42 @@
+.page {
+  .icon-right-open {
+    font-size: 1rem;
+  }
+
+  [data-pell] {
+    background-color: white;
+    border: 1px solid $gray-400;
+  }
+  [data-pell], .pell-actionbar {
+    border-radius: #{5/$base-font-size}rem;
+  }
+
+  .pell-content, .origin-text {
+    resize: vertical;
+    overflow-y: auto;
+  }
+
+  .pell-content {
+    height: #{75/$base-font-size}rem;
+    padding: #{10/$base-font-size}rem;
+  }
+
+  .origin-text {
+    height: #{108/$base-font-size}rem;
+    background-color: $gray-200;
+  }
+
+  .loader {
+    width: calc(100% - 30px);
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background-color: rgba(black,0.15);
+    border-radius: 4px;
+    display: none;
+  }
+
+  textarea {
+    height: 100%;
+  }
+}

@@ -1,0 +1,48 @@
+$gaps: (3, 5, 10, 20, 30);
+@each $gap in $gaps {
+  .gap-#{$gap} {
+    margin: -#{$gap/$base-font-size}rem !important;
+
+    >*{
+      padding: #{$gap/$base-font-size}rem !important;
+    }
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+@each $i, $color in $colors {
+  .bg-#{$i} {
+    background-color: $color !important;
+  }
+}
+
+$directions: (top, right, bottom, left);
+$sizes: (0, 10, 15, 20, 25, 30, 40, 50);
+@each $dir in $directions {
+
+  @each $size in $sizes {
+    .mar-#{$dir}-#{$size} {
+      margin-#{$dir}: #{$size/$base-font-size}rem !important;
+    }
+  }
+
+  .mar-#{$dir}-auto {
+    margin-#{$dir}: auto !important;
+  }
+}
+
+
+.pre {
+  padding: #{8/$base-font-size}rem;
+  margin: 0;
+  line-height: 1.5;
+  /*word-break: break-all;*/
+  word-wrap: break-word;
+  color: #333;
+  background-color: #f5f5f5;
+  border-radius: #{4/$base-font-size}rem;
+  font-family: Menlo,Monaco,Consolas,Courier New,monospace;
+}

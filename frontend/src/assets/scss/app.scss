@@ -1,0 +1,17 @@
+@import '../../../node_modules/bootstrap/scss/bootstrap';
+@import "../../../node_modules/select2/dist/css/select2.css";
+@import "../../../node_modules/select2-bootstrap-theme/dist/select2-bootstrap.css";
+
+@import "../icons/css/translations-dashboard.css";
+@import "variables";
+@import "helpers";
+
+//Components
+@import "components/translations-dashboard-card";
+@import "components/translations-dashboard-home-card";
+@import "components/translations-dashboard-progress";
+@import "components/or-separator";
+
+//Pages
+@import "layout";
+@import "pages/page";
