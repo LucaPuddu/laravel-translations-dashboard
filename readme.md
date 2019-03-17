@@ -13,7 +13,7 @@ The package combines the best features of two popular packages, namely [spatie\l
 Via Composer
 
 ``` bash
-composer require lpuddu/laravel-translations-dashboard 1.*
+composer require lpuddu/laravel-translations-dashboard v1.*
 ```
 
 ## Usage
