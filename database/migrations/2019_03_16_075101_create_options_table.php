@@ -15,16 +15,18 @@ class CreateOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('translator_options', function(Blueprint $table){
-            $table->bigIncrements('id');
-            $table->string('name', 64);
-            $table->string('value', 256)->nullable();
-        });
+        if (!Schema::hasTable('translator_options')) {
+            Schema::create('translator_options', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('name', 64);
+                $table->string('value', 256)->nullable();
+            });
 
-        Option::create([
-            'name' => 'rich_editor',
-            'value' => 0
-        ]);
+            Option::create([
+                'name' => 'rich_editor',
+                'value' => 0
+            ]);
+        }
     }
 
     /**

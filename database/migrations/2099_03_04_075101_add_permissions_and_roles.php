@@ -15,15 +15,17 @@ class AddPermissionsAndRoles extends Migration
      */
     public function up()
     {
-        Permission::create(['name' => 'manage-languages']);
-        Permission::create(['name' => 'manage-pages']);
-        Permission::create(['name' => 'manage-settings']);
-        Permission::create(['name' => 'translate']);
+        // Create permissions if they don't exist already
+        Permission::findOrCreate('manage-languages');
+        Permission::findOrCreate('manage-pages');
+        Permission::findOrCreate('manage-settings');
+        Permission::findOrCreate('translate');
 
-        $admin = Role::create(['name' => 'admin']);
+        // Create roles if they don't exist already
+        $admin = Role::findOrCreate('admin');
         $admin->givePermissionTo(Permission::all());
 
-        $translator = Role::create(['name' => 'translator']);
+        $translator = Role::findOrCreate('translator');
         $translator->givePermissionTo('translate');
     }
 
