@@ -71,7 +71,7 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
         // Publishing the configuration file.
         $this->publishes([
             __DIR__.'/../config/laravel-translations-dashboard.php' => config_path('laravel-translations-dashboard.php'),
-            __DIR__.'/../config/translator.php.php' => config_path('translator.php')
+            __DIR__.'/../config/translator.php' => config_path('translator.php')
         ], 'laravel-translations-dashboard.config');
 
         // Publishing the views.
