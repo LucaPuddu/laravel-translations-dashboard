@@ -22,10 +22,7 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
         $router->aliasMiddleware('role_or_permission', \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class);
 
         $this->loadViewsFrom(__DIR__ . '/../frontend/src/views', 'laravel-translations-dashboard');
-
-        copy(
-            __DIR__ . '/../../../../vendor/spatie/laravel-permission/database/migrations/create_permission_tables.php.stub',
-            __DIR__.'/../database/migrations/2019_03_04_075100_create_permission_tables.php');
+        
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
