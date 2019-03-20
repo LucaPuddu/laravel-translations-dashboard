@@ -39,7 +39,7 @@ class LaravelTranslationsDashboard
 
         return view('laravel-translations-dashboard::home', [
             'pages' => $groups->count(),
-            'languages' => $languageRepository->availableLocales(),
+            'languages' => $languages,
             'translated_translations' => $translations->count(),
             'progress' => $formatter->format($progress),
         ]);

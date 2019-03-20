@@ -17,11 +17,21 @@
                     </div>
                     <div class="col-12 d-flex">
                         <span class="h3">Pages</span>
-                        @can('manage-pages')
-                            <button class="btn btn-primary mar-left-auto" data-toggle="modal" data-target="#add-new">
-                                Add new page
-                            </button>
-                        @endcan
+                        @if($pages->count())
+                            @can('manage-pages')
+                                <button class="btn btn-primary mar-left-auto" data-toggle="modal"
+                                        data-target="#add-new">
+                                    Add new page
+                                </button>
+                            @endcan
+                        @else
+                            <div class="mar-left-auto">
+                                <p>No languages yet.</p>
+                                <a href="{{route('languages-languages')}}" class="btn btn-primary">
+                                    Add new
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <div class="row">
@@ -47,13 +57,15 @@
                                         <td class="col-4 col-sm-5">
                                             <div class="gap-10">
                                                 <div class="d-inline-block">
-                                                    <a href="{{route('languages-page', ['page' => $pageName])}}" class="btn btn-primary">View</a>
+                                                    <a href="{{route('languages-page', ['page' => $pageName])}}"
+                                                       class="btn btn-primary">View</a>
                                                 </div>
                                                 @can('manage-pages')
                                                     <div class="d-inline-block">
                                                         <button data-delete-page="{{$pageName}}" class="btn btn-danger"
                                                                 data-toggle="modal" data-target="#delete"
-                                                                data-disable-onloading>Delete</button>
+                                                                data-disable-onloading>Delete
+                                                        </button>
                                                     </div>
                                                 @endcan
                                             </div>
@@ -106,7 +118,8 @@
             <form action="{{route('languages-page-new')}}">
                 <div class="form-group">
                     <label for="name">Page name</label>
-                    <input type="text" class="form-control" id="name" aria-describedby="name_help" name="group" data-disable-onloading/>
+                    <input type="text" class="form-control" id="name" aria-describedby="name_help" name="group"
+                           data-disable-onloading/>
                     <div class="invalid-feedback"></div>
                     <small id="name_help" class="form-text text-muted">Only letters, numbers, dashes and underscores are
                         allowed.
