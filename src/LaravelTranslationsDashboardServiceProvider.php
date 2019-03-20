@@ -40,7 +40,10 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-translations-dashboard.php', 'laravel-translations-dashboard');
-        $this->mergeConfigFrom(__DIR__.'/../config/translator.php', 'laravel-translations-dashboard');
+        $this->mergeConfigFrom(__DIR__.'/../config/translator.php', 'translator');
+        $this->publishes([
+            __DIR__.'/../config/translator.php' => config_path('translator.php'),
+        ]);
 
         // Register the service the package provides.
         $this->app->singleton('laravel-translations-dashboard', function ($app) {
@@ -67,8 +70,7 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
     {
         // Publishing the configuration file.
         $this->publishes([
-            __DIR__.'/../config/laravel-translations-dashboard.php' => config_path('laravel-translations-dashboard.php'),
-            __DIR__.'/../config/translator.php' => config_path('translator.php'),
+            __DIR__.'/../config/laravel-translations-dashboard.php' => config_path('laravel-translations-dashboard.php')
         ], 'laravel-translations-dashboard.config');
 
         // Publishing the views.
