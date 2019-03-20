@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-12 d-flex">
                         <span class="h3">Pages</span>
-                        @if($pages->count())
+                        @if($languages->count())
                             @can('manage-pages')
                                 <button class="btn btn-primary mar-left-auto" data-toggle="modal"
                                         data-target="#add-new">

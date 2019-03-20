@@ -83,6 +83,7 @@ class LaravelTranslationsDashboard
 
         return view('laravel-translations-dashboard::pages', [
             'pages' => $pages,
+            'languages' => $languageRepository,
             'confirmation' => $faker->word,
             'completions' => $completions
         ]);

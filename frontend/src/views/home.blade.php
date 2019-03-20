@@ -11,9 +11,9 @@
                         Languages
                     @endslot
                     @slot('quantity')
-                        {{count($languages)}}
+                        {{$languages}}
                     @endslot\
-                    @if(count($languages))
+                    @if($languages)
                         @slot('footer')
                             <a class="text-muted text-uppercase" href="{{route('languages-languages')}}">(view all)</a>
                         @endslot
