@@ -12044,7 +12044,7 @@ a.text-dark:hover, a.text-dark:focus {
 .translations-dashboard-home-card .summary-icon {
   width: 5rem;
   height: 5rem;
-  line-height: calc(5rem - 4px);
+  line-height: 5rem;
   text-align: center;
   color: #fff;
   border-radius: 50%;
