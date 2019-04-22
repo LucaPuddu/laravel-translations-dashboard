@@ -1,4 +1,4 @@
-@component('laravel-translations-dashboard::components.card')
+@component('laravel-translations-dashboard::components.card', ['url' => $url ?? null])
     <div class="row translations-dashboard-home-card no-gutters align-items-center">
         <div class="col-auto">
             <div class="summary-icon bg-{{$color ?? 'blue'}}">

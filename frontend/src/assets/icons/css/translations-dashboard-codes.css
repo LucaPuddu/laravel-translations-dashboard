@@ -6,4 +6,6 @@
 .icon-left-open:before { content: '\f007'; } /* '' */
 .icon-menu:before { content: '\f008'; } /* '' */
 .icon-globe:before { content: '\f018'; } /* '' */
-.icon-doc:before { content: '\f04a'; } /* '' */
+.icon-folder-open:before { content: '\f068'; } /* '' */
+.icon-newspaper:before { content: '\f4f0'; } /* '' */
+.icon-search:before { content: '\f50d'; } /* '' */

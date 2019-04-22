@@ -15,6 +15,13 @@
                             Page successfully created. <a href="{{url()->current()}}">Reload</a> to see changes.
                         </div>
                     </div>
+                    <div class="col-12 mar-bottom-30">
+                        <form action="{{route('languages-pages')}}" method="GET">
+                            @include('laravel-translations-dashboard::components.search-bar', [
+                                'text' => 'Search page...'
+                            ])
+                        </form>
+                    </div>
                     <div class="col-12 d-flex">
                         <span class="h3">Pages</span>
                         @if($languages->count())
@@ -37,47 +44,13 @@
                 <div class="row">
                     <div class="col-12">
                         @if($pages->count())
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr class="d-flex">
-                                    <th scope="col" class="col-4 col-sm-4">Page</th>
-                                    <th scope="col" class="col-4 col-sm-3">Completion</th>
-                                    <th scope="col" class="col-4 col-sm-5">Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($pages as $pageName => $page)
-                                    <tr class="d-flex" data-page-title="{{$pageName}}">
-                                        <td class="col-4 col-sm-4">
-                                            {{$pageName}}
-                                        </td>
-                                        <td class="col-4 col-sm-3">
-                                            {{$completions[$pageName]}}
-                                        </td>
-                                        <td class="col-4 col-sm-5">
-                                            <div class="gap-10">
-                                                <div class="d-inline-block">
-                                                    <a href="{{route('languages-page', ['page' => $pageName])}}"
-                                                       class="btn btn-primary">View</a>
-                                                </div>
-                                                @can('manage-pages')
-                                                    <div class="d-inline-block">
-                                                        <button data-delete-page="{{$pageName}}" class="btn btn-danger"
-                                                                data-toggle="modal" data-target="#delete"
-                                                                data-disable-onloading>Delete
-                                                        </button>
-                                                    </div>
-                                                @endcan
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-
-                            {{ $pages->links() }}
+                            @include('laravel-translations-dashboard::components.pages')
                         @else
-                            <p><em>No pages to display. Try adding a new one!</em></p>
+                            @if($searching ?? false)
+                                <p><em>No matches.</em></p>
+                            @else
+                                <p><em>No pages to display. Try adding a new one!</em></p>
+                            @endif
                         @endif
                     </div>
                 </div>

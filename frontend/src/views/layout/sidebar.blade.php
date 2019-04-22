@@ -10,7 +10,10 @@
         <i class="sidebar-item-icon icon-globe blue"></i> <span class="sidebar-item-text">Languages</span>
     </a>
     <a href="{{route('languages-pages')}}" class="sidebar-item transition">
-        <i class="sidebar-item-icon icon-doc green"></i> <span class="sidebar-item-text">Pages</span>
+        <i class="sidebar-item-icon icon-folder-open green"></i> <span class="sidebar-item-text">Pages</span>
+    </a>
+    <a href="{{route('languages-elements')}}" class="sidebar-item transition">
+        <i class="sidebar-item-icon icon-newspaper"></i> <span class="sidebar-item-text">Elements</span>
     </a>
     @can('manage-settings')
         <a href="{{route('languages-settings')}}" class="sidebar-item transition">

@@ -4,6 +4,7 @@ require('bootstrap');
 let page = $('#page').val();
 
 require('./components/sidebar.js');
+require('./components/language-form.js');
 
 switch (page) {
     case 'home':
@@ -17,6 +18,9 @@ switch (page) {
         break;
     case 'page':
         require('./pages/page.js');
+        break;
+    case 'elements':
+        require('./pages/elements.js');
         break;
     default:
         console.log('error');

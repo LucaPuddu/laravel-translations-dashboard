@@ -1,0 +1,13 @@
+.search-bar {
+  #search {
+    .icon-search {
+      font-size: 1rem;
+    }
+  }
+
+  .form-control {
+    &::placeholder {
+      opacity: 0.5;
+    }
+  }
+}

@@ -24,15 +24,12 @@ class LaravelTranslationsDashboard
         $formatter = new NumberFormatter('en_US', NumberFormatter::PERCENT);
 
         $translations = Translation::all();
+        $notEmptyTranslations = $translations->where('text', '!=', '');
         $groups = $translations->groupBy('group');
         $languages = $languageRepository->count();
 
-        $uniqueItems = $translations->unique(function ($item) {
-            return $item['group'].$item['item'];
-        })->count();
-
-        if ($uniqueItems * $languages){
-            $progress = $translations->count() / ($uniqueItems * $languages);
+        if ($groups->count() * $languages) {
+            $progress = $notEmptyTranslations->count() / ($groups->count() * $languages);
         } else {
             $progress = 0;
         }
@@ -40,52 +37,27 @@ class LaravelTranslationsDashboard
         return view('laravel-translations-dashboard::home', [
             'pages' => $groups->count(),
             'languages' => $languages,
-            'translated_translations' => $translations->count(),
-            'progress' => $formatter->format($progress),
+            'translated_translations' => $notEmptyTranslations->count(),
+            'progress' => $progress * 100,
+            'progress_formatted' => $formatter->format($progress),
         ]);
     }
 
-    public function languages(Request $request, Generator $faker)
-    {
-        $languages = Language::paginate(Constants::LANGUAGES_PER_PAGE);
-
-        return view('laravel-translations-dashboard::languages', [
-            'languages' => $languages,
-            'confirmation' => $faker->word,
-            'locales' => Constants::LOCALES
-        ]);
-    }
-
+    /* PAGES */
     public function pages(Request $request, Generator $faker, LanguageRepository $languageRepository)
     {
-        $formatter = new NumberFormatter('en_US', NumberFormatter::PERCENT);
+        $request->validate($this->getSearchValidationRules());
 
-        $languagesCount = $languageRepository->count();
-        $translations = Translation::all();
-        $pages = $translations->groupBy('group');
-        $completions = [];
+        $search = $request->search;
 
-        $pages->each(function (Collection $page, $name) use ($formatter, &$completions, $languagesCount) {
-            $elementsCount = $page->unique(function ($item) {
-                return $item->item;
-            })->count();
-
-            $completions[$name] = $formatter->format($page->count() / ($elementsCount * $languagesCount));
-        });
-
-        // Paginate results
-        $chunks = $pages->chunk(Constants::PAGES_PER_PAGE);
-        // Requested chunk between 1 and $maxPage
-        $page = max(1, min($request->page ?? 1, $chunks->count()));
-        $chunk = $chunks->get($page - 1);
-        $pages = new LengthAwarePaginator($chunk, $pages->count(), Constants::PAGES_PER_PAGE);
-        $pages->withPath('/' . $request->path());
+        $pages = $this->getPages($request, $languageRepository);
 
         return view('laravel-translations-dashboard::pages', [
-            'pages' => $pages,
+            'pages' => $pages['pages'],
             'languages' => $languageRepository,
             'confirmation' => $faker->word,
-            'completions' => $completions
+            'completions' => $pages['completions'],
+            'searching' => !is_null($search)
         ]);
     }
 
@@ -115,6 +87,90 @@ class LaravelTranslationsDashboard
     public function editPage()
     {
         return response("");
+    }
+
+    public function page(Request $request, LanguageRepository $languageRepository, OptionsRepository $optionsRepository)
+    {
+        $request->validate($this->getSearchValidationRules());
+
+        $search = $request->search;
+
+        $richEditor = $optionsRepository->getValue('rich_editor');
+
+        $defaultLocale = Language::first();
+
+        $request->origin = $request->origin ?? $defaultLocale->locale;
+        $request->destination = $request->destination ?? $defaultLocale->locale;
+
+        $translations = Translation::where('group', $request->page)
+            ->get();
+
+        $translations = $this->getElements($translations, $search);
+
+        if (!is_null($search)) {
+            $translations = $translations
+                ->filter(function (Translation $translation) use ($search) {
+                    return (stripos($translation->item, $search) !== FALSE)
+                        || (stripos($translation->text, $search) !== FALSE);
+                });
+        }
+
+        $originTranslations = $translations->where('locale', $request->origin);
+        $destinationTranslations = $translations->where('locale', $request->destination);
+        $items = $translations->groupBy('item')->keys();
+
+        $page = new \stdClass();
+        $page->name = $request->page;
+        $page->items = $items;
+        $page->origin_translations = $originTranslations->keyBy('item');
+        $page->destination_translations = $destinationTranslations->keyBy('item');
+
+        return view('laravel-translations-dashboard::page', [
+            'page' => $page,
+            'origin_language' => $languageRepository->findByLocale($request->origin),
+            'destination_language' => $languageRepository->findByLocale($request->destination),
+            'languages' => $languageRepository->all(),
+            'rich_editor' => $richEditor == '1',
+            'searching' => !is_null($search ?? null)
+        ]);
+    }
+
+    /* ELEMENTS */
+    public function elements(Request $request, LanguageRepository $languageRepository, OptionsRepository $optionsRepository)
+    {
+        $request->validate($this->getSearchValidationRules());
+
+        $search = $request->search;
+
+        $translations = $this->getElements(Translation::all(), $search);
+
+        $richEditor = $optionsRepository->getValue('rich_editor');
+        $defaultLocale = Language::first();
+
+        $request->origin = $request->origin ?? $defaultLocale->locale;
+        $request->destination = $request->destination ?? $defaultLocale->locale;
+
+        $pages = $translations
+            ->groupBy(['group'])
+            ->map(function (\Illuminate\Support\Collection $page) use ($request) {
+                $new = new \stdClass();
+                $new->name = $page->first()->group;
+                $new->items = $page->groupBy('item')->keys();
+                $new->origin_translations = $page->where('locale', $request->origin)->keyBy('item');
+                $new->destination_translations = $page->where('locale', $request->destination)->keyBy('item');
+
+                return $new;
+            });
+
+        return view('laravel-translations-dashboard::elements', [
+            'page' => $request->page,
+            'pages' => $pages,
+            'origin_language' => $languageRepository->findByLocale($request->origin),
+            'destination_language' => $languageRepository->findByLocale($request->destination),
+            'languages' => $languageRepository->all(),
+            'rich_editor' => $richEditor == '1',
+            'searching' => !is_null($search ?? null)
+        ]);
     }
 
     public function newElement(Request $request, TranslationRepository $translationRepository)
@@ -182,33 +238,20 @@ class LaravelTranslationsDashboard
         return response("");
     }
 
-    public function page(Request $request, LanguageRepository $languageRepository, OptionsRepository $optionsRepository)
+    /* LANGUAGES */
+    public function languages(Request $request, Generator $faker)
     {
-        $richEditor = $optionsRepository->getValue('rich_editor');
+        $request->validate($this->getSearchValidationRules());
 
-        $defaultLocale = Language::first();
+        $search = $request->search;
 
-        $request->origin = $request->origin ?? $defaultLocale->locale;
-        $request->destination = $request->destination ?? $defaultLocale->locale;
+        $languages = $this->getLanguages($search);
 
-        $translations = Translation::where('group', $request->page)->get();
-        if (!$translations->count()) {
-            abort(Response::HTTP_NOT_FOUND);
-        }
-
-        $originTranslations = $translations->where('locale', $request->origin);
-        $destinationTranslations = $translations->where('locale', $request->destination);
-        $items = $translations->groupBy('item')->keys();
-
-        return view('laravel-translations-dashboard::page', [
-            'page' => $request->page,
-            'items' => $items,
-            'origin_translations' => $originTranslations->keyBy('item'),
-            'destination_translations' => $destinationTranslations->keyBy('item'),
-            'origin_language' => $languageRepository->findByLocale($request->origin),
-            'destination_language' => $languageRepository->findByLocale($request->destination),
-            'languages' => $languageRepository->all(),
-            'rich_editor' => $richEditor == '1'
+        return view('laravel-translations-dashboard::languages', [
+            'languages' => $languages,
+            'confirmation' => $faker->word,
+            'locales' => Constants::LOCALES,
+            'searching' => !is_null($search)
         ]);
     }
 
@@ -284,6 +327,7 @@ class LaravelTranslationsDashboard
         return response("");
     }
 
+    /* SETTINGS */
     public function settings(OptionsRepository $optionsRepository)
     {
         return view('laravel-translations-dashboard::settings', [
@@ -304,5 +348,76 @@ class LaravelTranslationsDashboard
         }
 
         return redirect()->back();
+    }
+
+    /* PRIVATE METHODS */
+    private function getLanguages($search = "")
+    {
+        return Language::where("name", "like", "%$search%")
+            ->orWhere("locale", "like", "%$search%")
+            ->paginate(Constants::LANGUAGES_PER_PAGE);
+    }
+
+    private function getPages(Request $request, LanguageRepository $languageRepository)
+    {
+        $search = $request->search;
+
+        $formatter = new NumberFormatter('en_US', NumberFormatter::PERCENT);
+
+        $languagesCount = $languageRepository->count();
+        $translations = Translation::all();
+        $pages = $translations->groupBy('group');
+        $completions = [];
+
+        if (!is_null($search)) {
+            $pages = $pages
+                ->filter(function (Collection $page, $name) use ($search) {
+                    $percent = 0;
+                    similar_text($name, $search, $percent);
+                    return $percent > 90 || mb_stripos($name, $search) !== FALSE;
+                });
+        }
+
+        $pages
+            ->each(function (Collection $page, $name) use ($formatter, &$completions, $languagesCount) {
+                $elementsCount = $page->unique(function ($item) {
+                    return $item->item;
+                })->count();
+
+                $completions[$name] = $formatter->format($page->count() / ($elementsCount * $languagesCount));
+            });
+
+        // Paginate results
+        $chunks = $pages->chunk(Constants::PAGES_PER_PAGE);
+        // Requested chunk between 1 and $maxPage
+        $page = max(1, min($request->page ?? 1, $chunks->count()));
+        $chunk = $chunks->get($page - 1);
+        $pages = new LengthAwarePaginator($chunk, $pages->count(), Constants::PAGES_PER_PAGE);
+        $pages->withPath('/' . $request->path());
+
+        return [
+            'pages' => $pages,
+            'completions' => $completions
+        ];
+    }
+
+    private function getElements(\Illuminate\Support\Collection $translations, $search = "")
+    {
+        if (!is_null($search)) {
+            $translations = $translations
+                ->filter(function (Translation $translation) use ($search) {
+                    return (stripos($translation->item, $search) !== FALSE)
+                        || (stripos($translation->text, $search) !== FALSE);
+                });
+        }
+
+        return $translations;
+    }
+
+    private function getSearchValidationRules()
+    {
+        return [
+            'search' => 'nullable',
+        ];
     }
 }

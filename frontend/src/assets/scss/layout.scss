@@ -30,7 +30,7 @@ body {
   display: flex;
   background-color: white;
   border-bottom: $border;
-  z-index: 1;
+  z-index: 9; //More than the search button (which has 2)
 
   .btn-logout {
     font-weight: 200;
@@ -61,7 +61,7 @@ body {
   width: $sidebar-length;
   height: 100vh;
   overflow: hidden;
-  z-index: 2; //More than #page-content
+  z-index: 10; //More than #page-content and #page-header
   background-color: white;
   transition-property: all;
   border-right: $border;

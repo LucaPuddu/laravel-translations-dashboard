@@ -43,6 +43,8 @@ Route::group(
         Route::get('/languages', 'LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboard@languages')->name('languages-languages');
         Route::get('/pages', 'LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboard@pages')->name('languages-pages');
         Route::get('/pages/{page}', 'LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboard@page')->name('languages-page');
+
+        Route::get('/elements', 'LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboard@elements')->name('languages-elements');
     }
 );
 

@@ -1,6 +1,6 @@
 @extends('laravel-translations-dashboard::layout.base')
 
-@section('page', 'page')
+@section('page', 'elements')
 
 @section('page-styles')
     @if($rich_editor)
@@ -15,15 +15,16 @@
 @endsection
 
 @section('content')
-    <div class="page">
+    <input type="hidden" name="manage_pages" @can('manage-pages') value="1" @else value="0" @endcan>
+    <div class="elements" data-save-action="{{route('languages-element-edit')}}">
         <div class="row">
-            <div class="col-10 mar-bottom-10">
+            <div class="col-12 mar-bottom-10">
                 <div class="row">
                     <div class="col-12">
                         <div class="alert alert-success d-none element-deleted" role="alert">
                             Element successfully deleted.
                         </div>
-                        <div class="alert alert-error d-none element-deleted" role="alert">
+                        <div class="alert alert-danger d-none save-error" role="alert">
                             Error with saving element.
                         </div>
                         <div class="alert alert-success d-none element-new" role="alert">
@@ -33,7 +34,7 @@
                 </div>
             </div>
             <div class="col-12 mar-bottom-30">
-                <form action="{{route('languages-page', $page->name)}}" method="GET">
+                <form action="{{route('languages-elements')}}" method="GET">
                     @if(isset(request()->origin))
                         <input type="hidden" name="origin" value="{{request()->origin}}">
                     @endif
@@ -42,36 +43,33 @@
                     @endif
 
                     @include('laravel-translations-dashboard::components.search-bar', [
-                                'text' => 'Search element in page...'
+                                'text' => 'Search element...'
                             ])
                 </form>
             </div>
-
             <div class="col-12 form mar-bottom-20">
                 @include('laravel-translations-dashboard::components.change-language')
             </div>
             <div class="col-12 form">
-                <form action="{{route('languages-page-edit')}}" method="POST" enctype="multipart/form-data">
-                    {{csrf_field()}}
-                    <div class="row">
-                        <div class="col-12">
-                            @if($page->items->count())
-                                @include('laravel-translations-dashboard::components.page', [
-                                    'page' => $page,
-                                    'from_language' => $origin_language->name,
-                                    'to_language' => $destination_language->name,
-                                ])
-                            @else
-                                <p><em>No matches.</em></p>
-                            @endif
-                        </div>
+                <div class="row">
+                    <div class="col-12" id="elements-container">
+                        @if($pages->count())
+                            @foreach($pages as $pageName => $page)
+                                <div class="mar-bottom-20">
+                                    @component('laravel-translations-dashboard::components.card')
+                                        @include('laravel-translations-dashboard::components.page', [
+                                            'page' => $page,
+                                            'from_language' => $origin_language->name,
+                                            'to_language' => $destination_language->name,
+                                        ])
+                                    @endcomponent
+                                </div>
+                            @endforeach
+                        @else
+                            <p><em>No matches.</em></p>
+                        @endif
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

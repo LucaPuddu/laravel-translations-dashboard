@@ -7653,6 +7653,7 @@ __webpack_require__("./node_modules/bootstrap/dist/js/bootstrap.js");
 var page = $('#page').val();
 
 __webpack_require__("./src/assets/js/components/sidebar.js");
+__webpack_require__("./src/assets/js/components/language-form.js");
 
 switch (page) {
     case 'home':
@@ -7667,9 +7668,232 @@ switch (page) {
     case 'page':
         __webpack_require__("./src/assets/js/pages/page.js");
         break;
+    case 'elements':
+        __webpack_require__("./src/assets/js/pages/elements.js");
+        break;
     default:
         console.log('error');
 }
+
+/***/ }),
+
+/***/ "./src/assets/js/components/language-form.js":
+/***/ (function(module, exports) {
+
+$(document).ready(function () {
+    var languageForm = $('#language-form');
+
+    // Change language
+    languageForm.find('select').change(function () {
+        languageForm.submit();
+    });
+});
+
+/***/ }),
+
+/***/ "./src/assets/js/components/page.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var axios = __webpack_require__("./node_modules/axios/index.js");
+var errorHelper = __webpack_require__("./src/assets/js/helpers/errorHelper.js");
+
+$(document).ready(function () {
+    var elementsContainer = $('.page-elements');
+    var addNewModal = $('#add-new');
+    var addNewForm = addNewModal.find('form').first();
+    var addNewAction = addNewForm.attr('action');
+    var itemInput = addNewForm.find('[name="item"]').first();
+    var pageInput = addNewForm.find('[name="group"]').first();
+    var addSuccess = $('.element-new');
+    var deleteSuccess = $('.element-deleted');
+    var saveError = $('.save-error');
+    var saveAction = $('[data-save-action]').data('save-action');
+    var editors = {};
+    var isPellActive = window.pell;
+    var canManagePages = $('[name="manage_pages"]').val() === '1';
+    var inputs = $('[data-content]');
+    var pellEditors = $('.pell-content');
+    inputs.change(function () {
+        $(this).addClass('dirty');
+    });
+
+    var deleteElement = void 0;
+    var deleteModal = $('#delete');
+    var page = null;
+
+    /* Init pell editor */
+    function initPellEditor(element) {
+        return window.pell.init({
+            element: element,
+            onChange: function onChange(html) {
+                $(element).find('.pell-content').addClass('dirty');
+            },
+            defaultParagraphSeparator: 'p',
+            styleWithCSS: true,
+            actions: ['bold', 'italic', 'underline', 'olist', 'ulist', 'link']
+        });
+    }
+
+    /* Set pages to add new element to */
+    function setPageToAddElementTo(event) {
+        pageInput.val($(event.target).parents('.page-elements').data('page'));
+    }
+
+    /* Submit new element */
+    function submitNew(e) {
+        var toDisable = addNewModal.find('[data-disable-onloading]');
+
+        // Disable when sending request
+        toDisable.prop('disabled', true);
+
+        var inputs = {
+            group: pageInput,
+            item: itemInput
+        };
+
+        axios.post(addNewAction, {
+            item: itemInput.val(),
+            group: pageInput.val()
+        }).then(function (res) {
+            addNewModal.modal('hide');
+            addSuccess.removeClass('d-none');
+            deleteSuccess.addClass('d-none');
+
+            // Add div
+            var newEl = '<div class="row mar-bottom-20 align-items-stretch" data-item="' + itemInput.val() + '">\n                                    <div class="col-2">\n                                        <span class="pre h6">' + itemInput.val() + '</span>\n                                    </div>\n                                    <div class="col-4">\n                                        <div class="form-control origin-text">\n                                        </div>\n                                    </div>\n                                    <div class="col-4">';
+
+            if (isPellActive) {
+                newEl += '<div data-pell>\n                                            <span data-content></span>\n                                        </div>';
+            } else {
+                newEl += '<textarea class="form-control" data-content></textarea>';
+            }
+
+            newEl += '<div class="loader"></div>\n                                    </div>\n                                    <div class="col-2 gap-3">\n                                        <div class="d-inline-block">\n                                            <button class="btn btn-primary" type="button" data-save-item="' + itemInput.val() + '">Save</button>\n                                        </div>';
+
+            if (canManagePages) {
+                newEl += '<div class="d-inline-block">\n                                            <button type="button" data-delete-item="' + itemInput.val() + '" class="btn btn-danger"\n                                                    data-toggle="modal" data-target="#delete">Delete</button>\n                                        </div>';
+            }
+
+            newEl += '</div></div>';
+
+            elementsContainer.append($(newEl));
+
+            // Init editor on new element
+            if (isPellActive) {
+                newEl = elementsContainer.children().last().find('[data-pell]').first().get(0);
+                editors[itemInput.val()] = initPellEditor(newEl);
+            }
+        }).catch(function (err) {
+            errorHelper.default(err.response.data, inputs);
+        }).then(function () {
+            toDisable.prop('disabled', false);
+        });
+
+        e.preventDefault();
+    }
+
+    /* Set element to be deleted */
+    function setElementToDelete(event) {
+        deleteElement = $(event.target).data('delete-item');
+        page = $(event.target).parents('.page-elements').data('page');
+    }
+
+    /* Send delete request */
+    function sendDelete(event) {
+        var action = deleteModal.find('[data-action]').data('action');
+
+        // Send request
+        axios.post(action, {
+            group: page,
+            item: deleteElement
+        }).then(function (res) {
+            deleteModal.modal('hide');
+            deleteSuccess.removeClass('d-none');
+            addSuccess.addClass('d-none');
+
+            $('[data-page="' + page + '"]').find('[data-item="' + deleteElement + '"]').remove();
+        }).catch(function (err) {
+            errorHelper.default(err.response.data, inputs);
+        });
+    }
+
+    /* Send save request */
+    function saveElement(event) {
+        var item = $(event.target).data('save-item');
+        var parentPageElements = $(event.target).parents('.page-elements');
+        var page = parentPageElements.data('page');
+        var parentRow = parentPageElements.find('[data-item="' + item + '"]');
+        var lang = $('select[name=destination]').val();
+        var value = void 0;
+        var input = void 0;
+        if (isPellActive) {
+            input = editors[page][item];
+            value = input.content.innerHTML;
+
+            input = $(input).find('.dirty');
+        } else {
+            input = parentRow.find('[data-content]');
+            value = input.val();
+        }
+        var loader = parentRow.find('.loader');
+        loader.show();
+
+        if (isPellActive) {
+            if ((value.match(/<p>/g) || []).length === 1) {
+                value = value.replace('<p>', '').replace('</p>', '');
+            }
+        }
+
+        // Send request
+        axios.post(saveAction, {
+            group: page,
+            item: item,
+            lang: lang,
+            text: value
+        }).then(function (res) {
+            input.removeClass('dirty');
+        }).catch(function (err) {
+            deleteSuccess.addClass('d-none');
+            addSuccess.addClass('d-none');
+            saveError.removeClass('d-none');
+        }).then(function () {
+            loader.hide();
+        });
+    }
+
+    // Init Editors
+    if (isPellActive) {
+        $('[data-pell]').each(function (i, el) {
+            var contentEl = $(el).find('[data-content]').first();
+            var content = contentEl.text();
+            contentEl.remove();
+
+            var editor = initPellEditor(el);
+
+            editor.content.innerHTML = content;
+
+            var page = $(el).closest('[data-page]').data('page');
+            var item = $(el).closest('[data-item]').data('item');
+
+            if (!editors[page]) {
+                editors[page] = {};
+            }
+
+            // Save reference to this editor
+            editors[page][item] = editor;
+        });
+    }
+
+    $('#add-new-btn').click(setPageToAddElementTo);
+
+    $('[data-new-confirm]').click(submitNew);
+    addNewForm.on('submit', submitNew);
+
+    elementsContainer.on('click', '[data-delete-item]', setElementToDelete);
+    $('[data-delete-confirm]').click(sendDelete);
+
+    elementsContainer.on('click', '[data-save-item]', saveElement);
+});
 
 /***/ }),
 
@@ -7717,6 +7941,13 @@ function displayErrors(errors, inputs) {
         inputs[key].next('.invalid-feedback').text(errors[key].join('<br/>'));
     });
 }
+
+/***/ }),
+
+/***/ "./src/assets/js/pages/elements.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__("./src/assets/js/components/page.js");
 
 /***/ }),
 
@@ -7876,182 +8107,7 @@ $(document).ready(function () {
 /***/ "./src/assets/js/pages/page.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-var axios = __webpack_require__("./node_modules/axios/index.js");
-var errorHelper = __webpack_require__("./src/assets/js/helpers/errorHelper.js");
-
-$(document).ready(function () {
-    var elementsContainer = $('#elements-container');
-    var addNewModal = $('#add-new');
-    var addNewForm = addNewModal.find('form').first();
-    var addNewAction = addNewForm.attr('action');
-    var itemInput = addNewForm.find('[name="item"]').first();
-    var pageInput = addNewForm.find('[name="group"]').first();
-    var languageForm = $('#language-form');
-    var addSuccess = $('.element-new');
-    var deleteSuccess = $('.element-deleted');
-    var saveError = $('.save-error');
-    var saveAction = $('[data-save-action]').data('save-action');
-    var editors = {};
-    var isPellActive = window.pell;
-    var canManagePages = $('[name="manage_pages"]').val() === '1';
-
-    var deleteElement = void 0;
-    var deleteModal = $('#delete');
-    var page = $('[data-page]').data('page');
-
-    /* Init pell editor */
-    function initPellEditor(element) {
-        return window.pell.init({
-            element: element,
-            onChange: function onChange(html) {},
-            defaultParagraphSeparator: 'p',
-            styleWithCSS: true,
-            actions: ['bold', 'italic', 'underline', 'olist', 'ulist', 'link']
-        });
-    }
-
-    /* Submit new element */
-    function submitNew(e) {
-        var toDisable = addNewModal.find('[data-disable-onloading]');
-
-        // Disable when sending request
-        toDisable.prop('disabled', true);
-
-        var inputs = {
-            group: pageInput,
-            item: itemInput
-        };
-
-        axios.post(addNewAction, {
-            item: itemInput.val(),
-            group: pageInput.val()
-        }).then(function (res) {
-            addNewModal.modal('hide');
-            addSuccess.removeClass('d-none');
-            deleteSuccess.addClass('d-none');
-
-            // Add div
-            var newEl = '<div class="row mar-bottom-20 align-items-stretch" data-item="' + itemInput.val() + '">\n                                    <div class="col-2">\n                                        <span class="pre h6">' + itemInput.val() + '</span>\n                                    </div>\n                                    <div class="col-4">\n                                        <div class="form-control origin-text">\n                                        </div>\n                                    </div>\n                                    <div class="col-4">';
-
-            if (isPellActive) {
-                newEl += '<div data-pell>\n                                            <span data-content></span>\n                                        </div>';
-            } else {
-                newEl += '<textarea class="form-control" data-content></textarea>';
-            }
-
-            newEl += '<div class="loader"></div>\n                                    </div>\n                                    <div class="col-2 gap-3">\n                                        <div class="d-inline-block">\n                                            <button class="btn btn-primary" type="button" data-save-item="' + itemInput.val() + '">Save</button>\n                                        </div>';
-
-            if (canManagePages) {
-                newEl += '<div class="d-inline-block">\n                                            <button type="button" data-delete-item="' + itemInput.val() + '" class="btn btn-danger"\n                                                    data-toggle="modal" data-target="#delete">Delete</button>\n                                        </div>';
-            }
-
-            newEl += '</div></div>';
-
-            elementsContainer.append($(newEl));
-
-            // Init editor on new element
-            if (isPellActive) {
-                newEl = elementsContainer.children().last().find('[data-pell]').first().get(0);
-                editors[itemInput.val()] = initPellEditor(newEl);
-            }
-        }).catch(function (err) {
-            errorHelper.default(err.response.data, inputs);
-        }).then(function () {
-            toDisable.prop('disabled', false);
-        });
-
-        e.preventDefault();
-    }
-
-    /* Set element to be deleted */
-    function setElementToDelete(event) {
-        deleteElement = $(event.target).data('delete-item');
-    }
-
-    /* Send delete request */
-    function sendDelete(event) {
-        var action = deleteModal.find('[data-action]').data('action');
-
-        // Send request
-        axios.post(action, {
-            group: page,
-            item: deleteElement
-        }).then(function (res) {
-            deleteModal.modal('hide');
-            deleteSuccess.removeClass('d-none');
-            addSuccess.addClass('d-none');
-
-            $('[data-item="' + deleteElement + '"]').remove();
-        }).catch(function (err) {
-            errorHelper.default(err.response.data, inputs);
-        });
-    }
-
-    /* Send save request */
-    function saveElement(event) {
-        var item = $(event.target).data('save-item');
-        var parentRow = $('[data-item="' + item + '"]');
-        var page = pageInput.val();
-        var lang = $('select[name=destination]').val();
-        var value = void 0;
-        if (isPellActive) {
-            value = editors[item].content.innerHTML;
-        } else {
-            value = parentRow.find('[data-content]').val();
-        }
-        var loader = parentRow.find('.loader');
-        loader.show();
-
-        if (isPellActive) {
-            if ((value.match(/<p>/g) || []).length === 1) {
-                value = value.replace('<p>', '').replace('</p>', '');
-            }
-        }
-
-        // Send request
-        axios.post(saveAction, {
-            group: page,
-            item: item,
-            lang: lang,
-            text: value
-        }).then(function (res) {}).catch(function (err) {
-            deleteSuccess.addClass('d-none');
-            addSuccess.addClass('d-none');
-            saveError.removeClass('d-none');
-        }).then(function () {
-            loader.hide();
-        });
-    }
-
-    // Init Editors
-    if (isPellActive) {
-        $('[data-pell]').each(function (i, el) {
-            var contentEl = $(el).find('[data-content]').first();
-            var content = contentEl.text();
-            contentEl.remove();
-
-            var editor = initPellEditor(el);
-
-            editor.content.innerHTML = content;
-
-            // Save reference to this editor
-            editors[$(el).closest('[data-item]').data('item')] = editor;
-        });
-    }
-
-    // Change language
-    languageForm.find('select').change(function () {
-        languageForm.submit();
-    });
-
-    $('[data-new-confirm]').click(submitNew);
-    addNewForm.on('submit', submitNew);
-
-    elementsContainer.on('click', '[data-delete-item]', setElementToDelete);
-    $('[data-delete-confirm]').click(sendDelete);
-
-    elementsContainer.on('click', '[data-save-item]', saveElement);
-});
+__webpack_require__("./src/assets/js/components/page.js");
 
 /***/ }),
 

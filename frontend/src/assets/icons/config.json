@@ -19,12 +19,6 @@
       "src": "mfglabs"
     },
     {
-      "uid": "7141927f949e757c7e218cf70d9dceb4",
-      "css": "doc",
-      "code": 61514,
-      "src": "mfglabs"
-    },
-    {
       "uid": "63e91725cfc5751fe4d772325fd50830",
       "css": "plus",
       "code": 59392,
@@ -52,6 +46,24 @@
       "uid": "7336247ba3db350dec8d6c0a47cef966",
       "css": "cog",
       "code": 59394,
+      "src": "mfglabs"
+    },
+    {
+      "uid": "ec21fe3492bb04d9e29103c319556ed8",
+      "css": "search",
+      "code": 62733,
+      "src": "mfglabs"
+    },
+    {
+      "uid": "18be7ed7a4baf5713f2de51bf83b12f2",
+      "css": "newspaper",
+      "code": 62704,
+      "src": "mfglabs"
+    },
+    {
+      "uid": "8e6b311d40f1002fd6de7d1bdfdc7f17",
+      "css": "folder-open",
+      "code": 61544,
       "src": "mfglabs"
     }
   ]
