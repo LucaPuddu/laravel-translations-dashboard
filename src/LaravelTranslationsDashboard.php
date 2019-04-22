@@ -25,17 +25,17 @@ class LaravelTranslationsDashboard
 
         $translations = Translation::all();
         $notEmptyTranslations = $translations->where('text', '!=', '');
-        $groups = $translations->groupBy('group');
+        $pages = $translations->groupBy('group');
         $languages = $languageRepository->count();
 
-        if ($groups->count() * $languages) {
-            $progress = $notEmptyTranslations->count() / ($groups->count() * $languages);
+        if ($pages->count() * $languages) {
+            $progress = $notEmptyTranslations->count() / ($pages->count() * $languages * $translations->groupBy('item')->count());
         } else {
             $progress = 0;
         }
 
         return view('laravel-translations-dashboard::home', [
-            'pages' => $groups->count(),
+            'pages' => $pages->count(),
             'languages' => $languages,
             'translated_translations' => $notEmptyTranslations->count(),
             'progress' => $progress * 100,
