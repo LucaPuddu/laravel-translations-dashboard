@@ -1,6 +1,6 @@
 <?php
 
-namespace LPuddu\LaravelTranslationsDashboard;
+namespace LPuddu\LaravelTranslationsDashboard\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -12,7 +12,7 @@ class PublishSpatieMigrations extends Command
      *
      * @var string
      */
-    protected $signature = 'translations-dashboard:init';
+    protected $signature = 'translations-dashboard:publish-spatie';
 
     /**
      * The console command description.
@@ -38,6 +38,9 @@ class PublishSpatieMigrations extends Command
      */
     public function handle()
     {
-        Artisan::call('php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"');
+        $this->call('vendor:publish', [
+            "--provider" => "Spatie\Permission\PermissionServiceProvider",
+            "--tag" => "migrations"
+        ]);
     }
 }

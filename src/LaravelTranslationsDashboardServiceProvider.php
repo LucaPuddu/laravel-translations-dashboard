@@ -3,6 +3,9 @@
 namespace LPuddu\LaravelTranslationsDashboard;
 
 use Illuminate\Support\ServiceProvider;
+use LPuddu\LaravelTranslationsDashboard\Commands\Init;
+use LPuddu\LaravelTranslationsDashboard\Commands\PublishAssets;
+use LPuddu\LaravelTranslationsDashboard\Commands\PublishSpatieMigrations;
 
 class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
 {
@@ -89,7 +92,9 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
 
         // Registering package commands.
         $this->commands([
-            \LPuddu\LaravelTranslationsDashboard\PublishSpatieMigrations::class,
+            Init::class,
+            PublishAssets::class,
+            PublishSpatieMigrations::class,
         ]);
     }
 }

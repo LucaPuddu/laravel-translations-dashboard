@@ -13,14 +13,14 @@ The package combines the best features of two popular packages, namely [spatie\l
 Via Composer
 
 ``` bash
-composer require lpuddu/laravel-translations-dashboard v1.*
+composer require lpuddu/laravel-translations-dashboard
 ```
 
 ## Usage
 
-Once installed, publish the assets folder by running
+Once installed, publish the required files (assets folder and dependencies migrations) by running
 ```
-php artisan vendor:publish --provider="LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboardServiceProvider" --tag="laravel-translations-dashboard.assets"
+php artisan translations-dashboard:init
 ```
 
 You can also customize the views and the config, by changing the tag when you publish (use `views` and `config` as tags)
@@ -78,7 +78,7 @@ MIT. Please see the [license file](license.md) for more information.
 [link-packagist]: https://packagist.org/packages/lpuddu/laravel-translations-dashboard
 [link-downloads]: https://packagist.org/packages/lpuddu/laravel-translations-dashboard
 [link-travis]: https://travis-ci.org/lpuddu/laravel-translations-dashboard
-[link-author]: https://github.com/lpuddu
+[link-author]: https://github.com/LucaPuddu
 [link-spatie]: https://github.com/spatie/laravel-permission
 [link-waavi]: https://github.com/Waavi/translation
 [link-config]: config/laravel-translations-dashboard.php
