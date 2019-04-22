@@ -22,6 +22,7 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
         $router->aliasMiddleware('permission', \Spatie\Permission\Middlewares\PermissionMiddleware::class);
         $router->aliasMiddleware('role_or_permission', \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class);
 
+        $this->loadViewsFrom(base_path('resources/views/vendor/lpuddu/laravel-translations-dashboard'), 'laravel-translations-dashboard');
         $this->loadViewsFrom(__DIR__ . '/../frontend/src/views', 'laravel-translations-dashboard');
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
