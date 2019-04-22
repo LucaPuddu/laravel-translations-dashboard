@@ -2,7 +2,6 @@
 
 namespace LPuddu\LaravelTranslationsDashboard;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
@@ -10,10 +9,9 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
     /**
      * Perform post-registration booting of services.
      *
-     * @param Filesystem $filesystem
      * @return void
      */
-    public function boot(Filesystem $filesystem)
+    public function boot()
     {
         // Add middleware to app
         $router = $this->app['router'];
@@ -23,8 +21,8 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../frontend/src/views', 'laravel-translations-dashboard');
 
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
@@ -39,10 +37,10 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/laravel-translations-dashboard.php', 'laravel-translations-dashboard');
-        $this->mergeConfigFrom(__DIR__.'/../config/translator.php', 'translator');
+        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-translations-dashboard.php', 'laravel-translations-dashboard');
+        $this->mergeConfigFrom(__DIR__ . '/../config/translator.php', 'translator');
         $this->publishes([
-            __DIR__.'/../config/translator.php' => config_path('translator.php'),
+            __DIR__ . '/../config/translator.php' => config_path('translator.php'),
         ]);
 
         // Register the service the package provides.
@@ -60,7 +58,7 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
     {
         return ['laravel-translations-dashboard'];
     }
-    
+
     /**
      * Console-specific booting.
      *
@@ -70,8 +68,8 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
     {
         // Publishing the configuration file.
         $this->publishes([
-            __DIR__.'/../config/laravel-translations-dashboard.php' => config_path('laravel-translations-dashboard.php'),
-            __DIR__.'/../config/translator.php' => config_path('translator.php')
+            __DIR__ . '/../config/laravel-translations-dashboard.php' => config_path('laravel-translations-dashboard.php'),
+            __DIR__ . '/../config/translator.php' => config_path('translator.php')
         ], 'laravel-translations-dashboard.config');
 
         // Publishing the views.
@@ -81,7 +79,7 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
 
         // Publishing assets.
         $this->publishes([
-            __DIR__.'/../frontend/dist' => public_path('vendor/lpuddu/laravel-translations-dashboard'),
+            __DIR__ . '/../frontend/dist' => public_path('vendor/lpuddu/laravel-translations-dashboard'),
         ], 'laravel-translations-dashboard.assets');
 
         // Publishing the translation files.
@@ -90,6 +88,8 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
         ], 'laravel-translations-dashboard.views');*/
 
         // Registering package commands.
-        // $this->commands([]);
+        $this->commands([
+            \LPuddu\LaravelTranslationsDashboard\PublishSpatieMigrations::class,
+        ]);
     }
 }
