@@ -8,7 +8,7 @@
 
         @can('manage-pages')
             <div class="col-12 col-lg-4">
-                <button class="btn btn-primary float-right" data-toggle="modal" data-target="#add-new" id="add-new-btn">Add new element
+                <button type="button" class="btn btn-primary float-right add-new-btn" data-toggle="modal" data-target="#add-new">Add new element
                     to <strong>{{$page->name}}</strong></button>
             </div>
         @endcan

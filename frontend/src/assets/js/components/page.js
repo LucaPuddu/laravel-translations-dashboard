@@ -52,6 +52,7 @@ $(document).ready(() => {
 
     /* Submit new element */
     function submitNew(e) {
+        let thisPageContainer = elementsContainer.filter(`[data-page="${pageInput.val()}"]`);
         const toDisable = addNewModal.find('[data-disable-onloading]');
 
         // Disable when sending request
@@ -107,11 +108,13 @@ $(document).ready(() => {
 
                 newEl += `</div></div>`;
 
-                elementsContainer.append($(newEl));
+                console.log(thisPageContainer);
+
+                thisPageContainer.append($(newEl));
 
                 // Init editor on new element
                 if (isPellActive) {
-                    newEl = elementsContainer.children().last().find('[data-pell]').first().get(0);
+                    newEl = thisPageContainer.children().last().find('[data-pell]').first().get(0);
                     editors[itemInput.val()] = initPellEditor(newEl);
                 }
             })
@@ -221,7 +224,7 @@ $(document).ready(() => {
         });
     }
 
-    $('#add-new-btn').click(setPageToAddElementTo);
+    $('.add-new-btn').click(setPageToAddElementTo);
 
     $('[data-new-confirm]').click(submitNew);
     addNewForm.on('submit', submitNew);
