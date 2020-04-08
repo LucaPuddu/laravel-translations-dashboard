@@ -5,21 +5,21 @@ namespace LPuddu\LaravelTranslationsDashboard\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class Init extends Command
+class PublishMigrations extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'translations-dashboard:init';
+    protected $signature = 'translations-dashboard:publish-migrations';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Publish all required files';
+    protected $description = 'Publish own migrations';
 
     /**
      * Create a new command instance.
@@ -38,8 +38,9 @@ class Init extends Command
      */
     public function handle()
     {
-        $this->call('translations-dashboard:publish-migrations');
-        $this->call('translations-dashboard:publish-assets');
-        $this->call('translations-dashboard:publish-spatie');
+        $this->call('vendor:publish', [
+            "--provider" => "LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboardServiceProvider",
+            "--tag" => "laravel-translations-dashboard.migrations"
+        ]);
     }
 }
