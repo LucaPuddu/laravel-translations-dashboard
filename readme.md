@@ -18,12 +18,16 @@ composer require lpuddu/laravel-translations-dashboard
 
 ## Usage
 
-Once installed, publish the required files (assets folder and dependencies migrations) by running
+Once installed, publish assets folder, migrations and config files by running:
 ```
 php artisan translations-dashboard:init
 ```
 
-You can also customize the views and the config, by changing the tag when you publish (use `views` and `config` as tags)
+You can also customize the views by publishing them:
+```php
+php artisan vendor:publish --provider="LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboardServiceProvider" --tag="laravel-translations-dashboard.migrations"
+```
+
 
 When published, the [config/laravel-translations-dashboard.php config file][link-config] contains:
 ```php
@@ -32,6 +36,11 @@ return [
      * The prefix applied to all the routes, eg. /translations/home
      */
     'prefix' => 'translations',
+
+    /**
+     *
+     */
+    'logout_route' => '/logout',
 
     /**
      * The list of middlewares that all routes should use.
