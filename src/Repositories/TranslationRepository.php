@@ -8,6 +8,8 @@
 
 namespace LPuddu\LaravelTranslationsDashboard\Repositories;
 
+use Illuminate\Support\Arr;
+
 class TranslationRepository extends \Waavi\Translation\Repositories\TranslationRepository
 {
     /**
@@ -19,9 +21,9 @@ class TranslationRepository extends \Waavi\Translation\Repositories\TranslationR
     public function validate(array $attributes)
     {
         $table     = $this->model->getTable();
-        $locale    = array_get($attributes, 'locale', '');
-        $namespace = array_get($attributes, 'namespace', '');
-        $group     = array_get($attributes, 'group', '');
+        $locale    = Arr::get($attributes, 'locale', '');
+        $namespace = Arr::get($attributes, 'namespace', '');
+        $group     = Arr::get($attributes, 'group', '');
         $rules     = $this->getValidationRules($table, $locale, $namespace, $group);
         $validator = $this->app['validator']->make($attributes, $rules);
         if ($validator->fails()) {

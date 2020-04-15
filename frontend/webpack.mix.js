@@ -16,5 +16,5 @@ if (env === 'production') {
 }
 
 if (env === 'development') {
-    mix.copyDirectory('dist', '../../../../public/vendor/lpuddu/laravel-translations-dashboard');
+    mix.sourceMaps();
 }

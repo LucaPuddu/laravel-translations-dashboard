@@ -9,6 +9,7 @@
 namespace LPuddu\LaravelTranslationsDashboard\Repositories;
 
 
+use Illuminate\Support\Arr;
 use Waavi\Translation\Models\Language;
 
 class LanguageRepository extends \Waavi\Translation\Repositories\LanguageRepository
@@ -21,7 +22,7 @@ class LanguageRepository extends \Waavi\Translation\Repositories\LanguageReposit
      */
     public function validate(array $attributes)
     {
-        $id    = array_get($attributes, 'id', 'NULL');
+        $id    = Arr::get($attributes, 'id', 'NULL');
         $table = $this->model->getTable();
         $rules = [
             'locale' => "required|unique:{$table},locale,{$id}",
