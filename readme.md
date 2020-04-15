@@ -25,7 +25,7 @@ php artisan translations-dashboard:init
 
 You can also customize the views by publishing them:
 ```php
-php artisan vendor:publish --provider="LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboardServiceProvider" --tag="laravel-translations-dashboard.migrations"
+php artisan vendor:publish --provider="LPuddu\LaravelTranslationsDashboard\LaravelTranslationsDashboardServiceProvider" --tag="laravel-translations-dashboard.views"
 ```
 
 
@@ -38,7 +38,7 @@ return [
     'prefix' => 'translations',
 
     /**
-     *
+     * The route used to logout translators
      */
     'logout_route' => '/logout',
 
