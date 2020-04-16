@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class AddPermissionsAndRoles extends Migration
+class AddPermissions extends Migration
 {
     /**
      * Run the migrations.
@@ -16,17 +16,10 @@ class AddPermissionsAndRoles extends Migration
     public function up()
     {
         // Create permissions if they don't exist already
-        Permission::findOrCreate('manage-languages');
-        Permission::findOrCreate('manage-pages');
-        Permission::findOrCreate('manage-settings');
-        Permission::findOrCreate('translate');
-
-        // Create roles if they don't exist already
-        $admin = Role::findOrCreate('admin');
-        $admin->givePermissionTo(Permission::all());
-
-        $translator = Role::findOrCreate('translator');
-        $translator->givePermissionTo('translate');
+        Permission::findOrCreate('manage-languages', config('laravel-translations-dashboard.guard', null));
+        Permission::findOrCreate('manage-pages', config('laravel-translations-dashboard.guard', null));
+        Permission::findOrCreate('manage-settings', config('laravel-translations-dashboard.guard', null));
+        Permission::findOrCreate('translate', config('laravel-translations-dashboard.guard', null));
     }
 
     /**
@@ -36,9 +29,6 @@ class AddPermissionsAndRoles extends Migration
      */
     public function down()
     {
-        Role::where('name', 'admin')->delete();
-        Role::where('name', 'translator')->delete();
-
         Permission::where('name', 'manage-languages')->delete();
         Permission::where('name', 'manage-pages')->delete();
         Permission::where('name', 'manage-settings')->delete();

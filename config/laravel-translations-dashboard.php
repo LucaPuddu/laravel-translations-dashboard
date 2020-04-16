@@ -12,6 +12,11 @@ return [
     'logout_route' => 'translations/logout',
 
     /**
+     * The guard to use for permissions
+     */
+    'guard' => 'web',
+
+    /**
      * The list of middlewares that all routes should use.
      * You can use this to authenticate users into the dashboard via the appropriate middleware.
      */

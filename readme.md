@@ -33,20 +33,25 @@ When published, the [config/laravel-translations-dashboard.php config file][link
 ```php
 return [
     /**
-     * The prefix applied to all the routes, eg. /translations/home
-     */
-    'prefix' => 'translations',
-
-    /**
-     * The route used to logout translators
-     */
-    'logout_route' => '/logout',
-
-    /**
-     * The list of middlewares that all routes should use.
-     * You can use this to authenticate users into the dashboard via the appropriate middleware.
-     */
-    'middlewares' => ['web', 'auth']
+         * The prefix applied to all the routes, eg. /translations/home
+         */
+        'prefix' => 'translations',
+    
+        /**
+         * The route used to logout translators
+         */
+        'logout_route' => 'translations/logout',
+    
+        /**
+         * The guard to use for permissions
+         */
+        'guard' => 'web',
+    
+        /**
+         * The list of middlewares that all routes should use.
+         * You can use this to authenticate users into the dashboard via the appropriate middleware.
+         */
+        'middlewares' => ['web', 'auth']
 ];
 ```
 
@@ -60,12 +65,15 @@ Execute the database migrations:
 php artisan migrate
 ```
 
-By default, the package adds four permissions (`manage-languages`, `manage-pages`, `manage-settings`, `translate`) and two roles (`admin` and `translator`).
+By default, the package adds four permissions (`manage-languages`, `manage-pages`, `manage-settings`, `translate`).
 Without permissions, you will only be able to login into the dashboard without doing much.
 
-Make sure that your user has a `HasRoles` trait, then create a user with the `translator` or `admin` role to start working.
+Make sure that your user has a `HasRoles` trait, then add the relevant permissions to start working.
 
-To make an admin, just use `$user->assignRole('admin')`. The change will be reflected immediately on your database. Check the [spatie\laravel-permission documentation][link-spatie] to explore more possibilities.
+```php
+$user->givePermissionTo('translate', 'manage-pages');
+```
+The change will be reflected immediately on your database. Check the [spatie\laravel-permission documentation][link-spatie] to explore more possibilities.
 
 ## Security
 

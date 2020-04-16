@@ -53,7 +53,7 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
             $migrations = [
                 'create_options_table',
                 'add_is_visible_to_translator_languages_tables',
-                'add_permissions_and_roles',
+                'add_permissions',
             ];
 
             $toPublish = [];
