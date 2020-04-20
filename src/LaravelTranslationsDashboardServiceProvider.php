@@ -52,7 +52,7 @@ class LaravelTranslationsDashboardServiceProvider extends ServiceProvider
         if (function_exists('config_path')) { // function not available and 'publish' not relevant in Lumen
             $migrations = [
                 'create_options_table',
-                'add_is_visible_to_translator_languages_tables',
+                'add_fields_to_translator_languages_tables',
                 'add_permissions',
             ];
 

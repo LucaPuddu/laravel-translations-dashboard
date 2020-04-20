@@ -8,12 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use LPuddu\LaravelTranslationsDashboard\Models\Language;
 use LPuddu\LaravelTranslationsDashboard\Repositories\LanguageRepository;
 use LPuddu\LaravelTranslationsDashboard\Repositories\OptionsRepository;
 use LPuddu\LaravelTranslationsDashboard\Repositories\TranslationRepository;
 use NumberFormatter;
 use Waavi\Translation\Facades\TranslationCache;
-use Waavi\Translation\Models\Language;
 use Symfony\Component\HttpFoundation\Response;
 use Waavi\Translation\Models\Translation;
 
@@ -265,6 +265,7 @@ class LaravelTranslationsDashboard
                 'name' => $request->name,
                 'locale' => $request->locale,
                 'visible' => $request->visible,
+                'rtl' => $request->rtl,
             ];
             $valid = $languageRepository->validate($data);
 
@@ -272,23 +273,20 @@ class LaravelTranslationsDashboard
                 return response($languageRepository->validationErrors(), Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            $tempLang = Language::create([
-                'name' => 'temp',
-                'locale' => 'temp'
-            ]);
+            $tempLocale = 'temp';
+
+            $language = $languageRepository->find($request->id);
 
             // Update all the translations
-            Translation::where('locale', Language::find($request->id)->locale)->update(['locale' => $tempLang->locale]);
+            Translation::where('locale', $language->locale)->update(['locale' => $tempLocale]);
 
             // Update old language
-            $languageRepository->find($request->id)->update($data);
+            $language->update($data);
 
             // Change back language name to original
-            Translation::where('locale', $tempLang->locale)->update(['locale' => $request->locale]);
-
-            // Delete temp language
-            $tempLang->forceDelete();
+            Translation::where('locale', $tempLocale)->update(['locale' => $request->locale]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 

@@ -10,7 +10,8 @@ namespace LPuddu\LaravelTranslationsDashboard\Repositories;
 
 
 use Illuminate\Support\Arr;
-use Waavi\Translation\Models\Language;
+use Illuminate\Support\Facades\Lang;
+use LPuddu\LaravelTranslationsDashboard\Models\Language;
 
 class LanguageRepository extends \Waavi\Translation\Repositories\LanguageRepository
 {
@@ -27,7 +28,8 @@ class LanguageRepository extends \Waavi\Translation\Repositories\LanguageReposit
         $rules = [
             'locale' => "required|unique:{$table},locale,{$id}",
             'name'   => "required|unique:{$table},name,{$id}",
-            'visible' => "boolean|nullable"
+            'visible' => "boolean|nullable",
+            'rtl' => "boolean|nullable",
         ];
         $validator = $this->validator->make($attributes, $rules);
         if ($validator->fails()) {
@@ -41,13 +43,14 @@ class LanguageRepository extends \Waavi\Translation\Repositories\LanguageReposit
      * Create model or restores it if it existed already
      *
      * @param array $attributes
-     * @return null|Language
+     * @return null|Language|bool
      */
     public function createOrRestore(array $attributes){
         $rules = [
             'locale' => "required",
             'name'   => "required",
-            'visible' => "boolean|nullable"
+            'visible' => "boolean|nullable",
+            'rtl' => "boolean|nullable",
         ];
         $validator = $this->validator->make($attributes, $rules);
 
@@ -60,8 +63,17 @@ class LanguageRepository extends \Waavi\Translation\Repositories\LanguageReposit
         if (isset($lang)) {
             $lang = $this->restore($lang->id);
         } else {
-            $lang = $this->create(['name' => $attributes['name'], 'locale' => $attributes['locale']]);
+            $lang = $this->create([
+                'name' => $attributes['name'],
+                'locale' => $attributes['locale']
+            ]);
         }
         return $lang;
+    }
+
+    public function find($id, $related = [])
+    {
+        return Language::first();
+        return Language::with($related)->find($id, $related);
     }
 }

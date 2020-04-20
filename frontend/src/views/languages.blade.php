@@ -27,10 +27,9 @@
                     <div class="col-12 d-flex">
                         <span class="h3">Languages</span>
                         @can('manage-languages')
-                            <button class="btn btn-primary mar-left-auto" data-toggle="modal" data-target="#add-new">Add
-                                new
-                                language
-                            </button>
+                            <button class="btn btn-primary mar-left-auto"
+                                    data-toggle="modal"
+                                    data-target="#add-new">Add new language</button>
                         @endcan
                     </div>
                 </div>

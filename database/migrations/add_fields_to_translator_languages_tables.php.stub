@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddIsVisibleToTranslatorLanguagesTables extends Migration
+class AddFieldsToTranslatorLanguagesTables extends Migration
 {
     /**
      * Run the migrations.
@@ -15,6 +15,7 @@ class AddIsVisibleToTranslatorLanguagesTables extends Migration
     {
         Schema::table('translator_languages', function(Blueprint $table){
             $table->addColumn('boolean', 'visible')->nullable()->default(false);
+            $table->addColumn('boolean', 'rtl')->nullable()->default(false);
         });
     }
 
@@ -27,6 +28,7 @@ class AddIsVisibleToTranslatorLanguagesTables extends Migration
     {
         Schema::table('translator_languages', function(Blueprint $table){
             $table->dropColumn('visible');
+            $table->dropColumn('rtl');
         });
     }
 }

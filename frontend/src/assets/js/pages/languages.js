@@ -26,14 +26,16 @@ $(document).ready(function () {
         const inputs = {
             name: form.find('[name="name"]').first(),
             locale: form.find('[name="locale"]').first(),
-            visible: form.find('[name="visible"]').first()
+            visible: form.find('[name="visible"]').first(),
+            rtl: form.find('[name="rtl"]').first()
         };
 
         let data = {
             id: id,
             name: inputs.name.val(),
             locale: inputs.locale.val(),
-            visible: inputs.visible.prop('checked')
+            visible: inputs.visible.prop('checked'),
+            rtl: inputs.rtl.prop('checked')
         };
 
         // Send request
@@ -42,6 +44,7 @@ $(document).ready(function () {
                 inputs.name.removeClass('is-invalid');
                 inputs.locale.removeClass('is-invalid');
                 inputs.visible.removeClass('is-invalid');
+                inputs.rtl.removeClass('is-invalid');
             })
             .catch((err) => {
                 displayErrors(err.response.data, inputs);

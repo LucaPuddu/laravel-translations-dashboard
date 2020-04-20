@@ -13,7 +13,8 @@ class Constants
 {
     const LANGUAGES_PER_PAGE = 15;
     const PAGES_PER_PAGE = 15;
-    const LOCALES = array("af_NA" => "Afrikaans (Namibia)",
+    const LOCALES = [
+        "af_NA" => "Afrikaans (Namibia)",
         "af_ZA" => "Afrikaans (South Africa)",
         "af" => "Afrikaans",
         "ak_GH" => "Akan (Ghana)",
@@ -448,5 +449,6 @@ class Constants
         "yo_NG" => "Yoruba (Nigeria)",
         "yo" => "Yoruba",
         "zu_ZA" => "Zulu (South Africa)",
-        "zu" => "Zulu");
+        "zu" => "Zulu"
+    ];
 }

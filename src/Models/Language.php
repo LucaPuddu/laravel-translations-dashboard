@@ -8,6 +8,7 @@ namespace LPuddu\LaravelTranslationsDashboard\Models;
  * @property string $locale
  * @property string $name
  * @property bool   $visible
+ * @property bool   $rtl
  */
 class Language extends \Waavi\Translation\Models\Language
 {
@@ -15,5 +16,6 @@ class Language extends \Waavi\Translation\Models\Language
         'locale',
         'name',
         'visible',
+        'rtl',
     ];
 }
