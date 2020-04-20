@@ -15,6 +15,9 @@
     "LaravelTranslationsDashboard"
   ],
   "require": {
+    "php": "^7.4",
+    "ext-json": "*",
+    "ext-intl": "*",
     "spatie/laravel-permission": "^3.11",
     "waavi/translation": "2.4.x"
   },
