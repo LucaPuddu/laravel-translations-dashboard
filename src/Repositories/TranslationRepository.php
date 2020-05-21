@@ -9,6 +9,8 @@
 namespace LPuddu\LaravelTranslationsDashboard\Repositories;
 
 use Illuminate\Support\Arr;
+use LPuddu\LaravelTranslationsDashboard\Rules\KebabCase;
+use LPuddu\LaravelTranslationsDashboard\Rules\KebabCaseAndDot;
 
 class TranslationRepository extends \Waavi\Translation\Repositories\TranslationRepository
 {
@@ -37,8 +39,8 @@ class TranslationRepository extends \Waavi\Translation\Repositories\TranslationR
         return [
             'locale'    => 'required',
             'namespace' => 'required',
-            'group'     => ['required', 'alpha_dash'],
-            'item'      => "alpha_dash|required|unique:{$table},item,NULL,id,locale,{$locale},namespace,{$namespace},group,{$group}",
+            'group'     => ['required', new KebabCase()],
+            'item'      => [new KebabCaseAndDot(), "required","unique:{$table},item,NULL,id,locale,{$locale},namespace,{$namespace},group,{$group}"],
             'text'      => '', // Translations may be empty
         ];
     }

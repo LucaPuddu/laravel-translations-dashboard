@@ -94,7 +94,7 @@
                     <input type="text" class="form-control" id="name" aria-describedby="name_help" name="group"
                            data-disable-onloading/>
                     <div class="invalid-feedback"></div>
-                    <small id="name_help" class="form-text text-muted">Only letters, numbers, dashes and underscores are
+                    <small id="name_help" class="form-text text-muted">Only letters, numbers, and dashes (-) are
                         allowed.
                     </small>
                 </div>

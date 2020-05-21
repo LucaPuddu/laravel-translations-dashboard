@@ -9,7 +9,7 @@
                 <input type="text" class="form-control" id="name" aria-describedby="name_help" name="item"
                        data-disable-onloading/>
                 <div class="invalid-feedback"></div>
-                <small id="name_help" class="form-text text-muted">Only letters, numbers, dashes and underscores are
+                <small id="name_help" class="form-text text-muted">Only letters, numbers, dashes and dots are
                     allowed.
                 </small>
 

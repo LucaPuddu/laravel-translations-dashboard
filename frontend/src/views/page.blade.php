@@ -17,7 +17,7 @@
 @section('content')
     <div class="page">
         <div class="row">
-            <div class="col-10 mar-bottom-10">
+            <div class="col-12 mar-bottom-10">
                 <div class="row">
                     <div class="col-12">
                         <div class="alert alert-success d-none element-deleted" role="alert">
