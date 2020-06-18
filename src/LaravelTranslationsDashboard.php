@@ -65,7 +65,7 @@ class LaravelTranslationsDashboard
     public function newPage(Request $request, TranslationRepository $translationRepository)
     {
         $success = $translationRepository->create([
-            'locale' => Language::first()->locale,
+            'locale' => $this->getDefaultLocale(),
             'namespace' => '*',
             'group' => $request->name,
             'item' => 'test',
@@ -356,7 +356,7 @@ class LaravelTranslationsDashboard
     protected function rememberDefaultLocale(string $locale = null, bool $from = false)
     {
         if (!isset($locale)) {
-            $locale = Language::first()->locale;
+            $locale = $this->getDefaultLocale();
         }
         if ($from) {
             $type = 'from';
@@ -380,7 +380,7 @@ class LaravelTranslationsDashboard
         }
         $savedLocale = Cookie::get(
             "laravel_translation_dashboard_default_locale_{$type}",
-            Language::first()->locale
+            $this->getDefaultLocale()
         );
 
         return $savedLocale;
@@ -468,5 +468,10 @@ class LaravelTranslationsDashboard
         return [
             'search' => 'nullable',
         ];
+    }
+
+    private function getDefaultLocale(): string
+    {
+        return app()->getLocale() ?? Language::first()->locale;
     }
 }
