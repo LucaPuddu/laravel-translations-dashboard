@@ -1,3 +1,5 @@
+**Note: as new Laravel version keep coming out, this package is not actively mantained anymore. It might receive bug fixes, but won't be kept up to date.**
+
 # Laravel Translations Dashboard
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
