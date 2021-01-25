@@ -73,7 +73,6 @@ class LanguageRepository extends \Waavi\Translation\Repositories\LanguageReposit
 
     public function find($id, $related = [])
     {
-        return Language::first();
         return Language::with($related)->find($id, $related);
     }
 }

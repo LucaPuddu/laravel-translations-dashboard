@@ -6,6 +6,7 @@ use Faker\Generator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -224,6 +225,7 @@ class LaravelTranslationsDashboard
             'text' => $request->text ?? '',
         ];
 
+        Cache::forget("translations.{$request->lang}.{$request->group}");
         TranslationCache::flush($request->lang, $request->group, '*');
 
         if (!isset($translationToUpdate)) {
@@ -448,6 +450,20 @@ class LaravelTranslationsDashboard
             'pages' => $pages,
             'completions' => $completions,
         ];
+    }
+
+    public function getPage(string $locale, string $page): \Illuminate\Support\Collection
+    {
+        return Cache::rememberForever("translations.{$locale}.{$page}", function() use ($locale, $page) {
+            return Translation::where('group', $page)
+                ->where('locale', $locale)
+                ->get()
+                ->mapWithKeys(
+                    function (Translation $translation) {
+                        return [$translation->item => $translation->text];
+                    }
+                );
+        });
     }
 
     private function getElements(\Illuminate\Support\Collection $translations, $search = "")
